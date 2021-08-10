@@ -8,11 +8,6 @@ let deathDate;
 let recoveryDate;
 let activeDate;
 
-let confirmedDateBefore;
-let deathDateBefore;
-let recoveryDateBefore;
-let activeDateBefore;
-
 const tConfirmed = document.getElementById("tconfirmed");
 const tRecovered = document.getElementById("trecovered");
 const tDeath = document.getElementById("tdeath");
@@ -27,7 +22,7 @@ const date = document.getElementById("today");
 
 async function init() {
   countries = await listCountries();
-  date.addEventListener("blur", onFilterChange);
+  date.addEventListener("change", onFilterChange);
   country.addEventListener("change", onFilterChange);
   renderCountries();
   loadTodaysGlobalData();
@@ -42,7 +37,7 @@ async function onFilterChange() {
   if (countrySelected && countrySelected !== "global") {
     const dateParam = date.value ? date.value : new Date();
     const data = await getTodaysData(countrySelected, dateParam);
-    fillDataCountry(data[0], data[1]);
+    fillDataCountry(data[0], data[1], data[2]);
   } else {
     loadTodaysGlobalData();
   }
@@ -53,22 +48,27 @@ async function loadTodaysGlobalData() {
   fillDataGlobal(globalData.Global);
 }
 
-function fillDataCountry(dataBefore, data) {
+function fillDataCountry(dataBeforeTwoDay, dataBeforeOneDay, data) {
   if (data) {
-    if (dataBefore) {
-      confirmedDateBefore = calculaDiferenca(data.Confirmed,dataBefore.Confirmed);
-      deathDateBefore = calculaDiferenca(data.Deaths, dataBefore.Deaths);
-      recoveryDateBefore = calculaDiferenca(data.Recovered, dataBefore.Recovered);
-      activeDateBefore = calculaDiferenca(data.Active, dataBefore.Active);
+    if (dataBeforeOneDay) {
+      const confirmedDateBefore = calculaDiferenca(data.Confirmed,dataBeforeOneDay.Confirmed);
+      const deathDateBefore = calculaDiferenca(data.Deaths, dataBeforeOneDay.Deaths);
+      const recoveryDateBefore = calculaDiferenca(data.Recovered, dataBeforeOneDay.Recovered);
+      const activeDateBefore = calculaDiferenca(data.Active, dataBeforeOneDay.Active);
+
+      const deltaConfirmedDateBefore = calculaDiferenca(dataBeforeTwoDay.Confirmed,dataBeforeOneDay.Confirmed);
+      const deltaDeathDateBefore = calculaDiferenca(dataBeforeTwoDay.Deaths, dataBeforeOneDay.Deaths);
+      const deltaRecoveryDateBefore = calculaDiferenca(dataBeforeTwoDay.Recovered, dataBeforeOneDay.Recovered);
+      const deltaActiveDateBefore = calculaDiferenca(dataBeforeTwoDay.Active, dataBeforeOneDay.Active);
 
       tConfirmed.textContent = `${diarioText} ${formatNumber(confirmedDateBefore)}`;
-      formatPositiveOrNegative(tConfirmed, confirmedDateBefore);
+      formatPositiveOrNegative(tConfirmed, deltaConfirmedDateBefore);
       tDeath.textContent = `${diarioText} ${formatNumber(deathDateBefore)}`;
-      formatPositiveOrNegative(tDeath, deathDateBefore);
+      formatPositiveOrNegative(tDeath, deltaDeathDateBefore);
       tRecovered.textContent = `${diarioText} ${formatNumber(recoveryDateBefore)}`;
-      formatPositiveOrNegative(tRecovered, recoveryDateBefore);
+      formatPositiveOrNegative(tRecovered, deltaRecoveryDateBefore);
       tActive.textContent = `${diarioText} ${formatNumber(activeDateBefore)}`;
-      formatPositiveOrNegative(tActive, activeDateBefore);
+      formatPositiveOrNegative(tActive, deltaActiveDateBefore);
     } else {
       tConfirmed.textContent = 0;
       tDeath.textContent = 0;
@@ -130,6 +130,16 @@ function fillDataGlobal(data) {
 }
 
 function renderCountries() {
+  countries.sort((a,b) => {
+  if(a.Slug > b.Slug) {
+    return 1;
+  } else if (a.Slug < b.Slug){
+    return -1
+  } else {
+    return 0;
+  }
+  });
+  
   for (const item of countries) {
     const option = document.createElement("option");
     option.textContent = item.Country;

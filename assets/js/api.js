@@ -18,10 +18,10 @@ function listCountries() {
   return fetchJson(`${baseUrl}/countries`);
 }
 
-function getTodaysData(country, date, isBefore) {
+function getTodaysData(country, date) {
   if (country && country != "global" && date) {
     const dateInit = new Date(date);
-    const dateEnd = new Date(dateInit - 1 * 24 * 60 * 60 * 1000);
+    const dateEnd = new Date(dateInit - 2 * 24 * 60 * 60 * 1000);
     dateInit.setUTCHours(0, 0, 0, 0);
     dateEnd.setUTCHours(0, 0, 0, 0);
     console.log(`${baseUrl}/country/${country}?from=${dateEnd.toISOString()}&to=${dateInit.toISOString()}`);
