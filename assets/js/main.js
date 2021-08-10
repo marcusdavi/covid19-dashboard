@@ -22,7 +22,7 @@ const date = document.getElementById("today");
 
 async function init() {
   countries = await listCountries();
-  date.addEventListener("change", onFilterChange);
+  date.addEventListener("blur", onFilterChange);
   country.addEventListener("change", onFilterChange);
   renderCountries();
   loadTodaysGlobalData();
@@ -37,6 +37,7 @@ async function onFilterChange() {
   if (countrySelected && countrySelected !== "global") {
     const dateParam = date.value ? date.value : new Date();
     const data = await getTodaysData(countrySelected, dateParam);
+    console.log(data);
     fillDataCountry(data[0], data[1], data[2]);
   } else {
     loadTodaysGlobalData();

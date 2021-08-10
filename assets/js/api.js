@@ -24,9 +24,8 @@ function getTodaysData(country, date) {
     const dateEnd = new Date(dateInit - 2 * 24 * 60 * 60 * 1000);
     dateInit.setUTCHours(0, 0, 0, 0);
     dateEnd.setUTCHours(0, 0, 0, 0);
-    console.log(`${baseUrl}/country/${country}?from=${dateEnd.toISOString()}&to=${dateInit.toISOString()}`);
     return fetchJson(
-      `${baseUrl}/country/${country}?from=${dateEnd.toISOString()}&to=${dateInit.toISOString()}`
+      `${baseUrl}/total/country/${country}?from=${dateEnd.toISOString()}&to=${dateInit.toISOString()}`
     );
   } else {
     return fetchJson(`${baseUrl}/summary`);
